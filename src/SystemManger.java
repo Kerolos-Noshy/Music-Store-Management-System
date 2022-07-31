@@ -1,9 +1,11 @@
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SystemManger {
     Connection connection = DbConnection.ConnectionDB();
     PreparedStatement preparedStatement;
+    ArrayList <String> cart = new ArrayList<>();
 
 
     public void startProgram() {
@@ -398,62 +400,160 @@ public class SystemManger {
     }
     public void customerOperations() {
         System.out.println("\nPlease Enter The Operation Number:");
-        System.out.println("1- Create Order");
-        System.out.println("2- Search Music");
-        System.out.println("3- Filter Musics (sold items, item in stock, all items)");
-        System.out.println("4- Show Music Details");
-        System.out.println("5- Show all Musics");
-        System.out.println("6- Sign Out");
+
+        System.out.println("1- Search Music");
+        System.out.println("2- Filter Musics (sold items, item in stock, all items)");
+        System.out.println("3- Show Music Details");
+        System.out.println("4- Show all Musics");
+        System.out.println("5- Create Order");
+        System.out.println("6- Show Cart");
+        System.out.println("7- Delete Music From Cart");
+        System.out.println("8- Checkout Orders");
+        System.out.println("9- Sign Out");
 
         Scanner input = new Scanner(System.in);
         int no = input.nextInt();
 
         switch (no) {
             case 1:
-                createOrder();
-                System.out.println("\nPress Enter to Continue");
-                input.nextLine();
-                input.nextLine();
-                customerOperations();
-                break;
-            case 2:
                 searchMusic();
                 System.out.println("\nPress Enter to Continue");
                 input.nextLine();
                 input.nextLine();
                 customerOperations();
                 break;
-            case 3:
+            case 2:
                 filterMusics();
                 System.out.println("\nPress Enter to Continue");
                 input.nextLine();
                 input.nextLine();
                 customerOperations();
                 break;
-            case 4:
+            case 3:
                 showMusicDetails();
                 System.out.println("\nPress Enter to Continue");
                 input.nextLine();
                 input.nextLine();
                 customerOperations();
                 break;
-            case 5:
+            case 4:
                 showAllMusics();
                 System.out.println("\nPress Enter to Continue");
                 input.nextLine();
                 input.nextLine();
                 customerOperations();
                 break;
+            case 5:
+                createOrder();
+                System.out.println("\nPress Enter to Continue");
+                input.nextLine();
+                input.nextLine();
+                customerOperations();
+                break;
             case 6:
+                getMusicInCart();
+                System.out.println("\nPress Enter to Continue");
+                input.nextLine();
+                input.nextLine();
+                customerOperations();
+                break;
+            case 7:
+                deleteMusicFormCart();
+                System.out.println("\nPress Enter to Continue");
+                input.nextLine();
+                input.nextLine();
+                customerOperations();
+                break;
+            case 8:
+                checkoutOrders();
+                System.out.println("\nPress Enter to Continue");
+                input.nextLine();
+                input.nextLine();
+                customerOperations();
+                break;
+            case 9:
                 System.out.println("\nSigned out successfully");
                 login();
                 break;
         }
     }
 
-    public void createOrder(){
-
+    public void createOrder() {
+        System.out.print("Enter music name: ");
+        Scanner input = new Scanner(System.in);
+        String musicName = input.nextLine();
+        try {
+            Statement statement = connection.createStatement();
+            if (Music.isMusicExist(musicName, statement)) {
+               cart.add(musicName);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
     }
+
+    public void getMusicInCart() {
+        int i;
+        for (i = 0; i < cart.size(); i++) {
+            System.out.println(i + 1 + " - " + cart.get(i) + "\n");
+        }
+        if (cart.size() > 0)
+            System.out.println("Your Bill: " + getBill() + "$");
+    }
+
+    public float getBill() {
+        float total = 0;
+        for (int i = 0; i < cart.size(); i++){
+            String musicName = cart.get(i);
+            try {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT price FROM music WHERE musicName = '" + musicName + "'");
+                float price = resultSet.getFloat(1);
+                total += price;
+            } catch (SQLException e) {
+                throw new RuntimeException();
+            }
+        }
+        return total;
+    }
+    public void deleteMusicFormCart() {
+        System.out.println("Enter music name");
+        Scanner input = new Scanner(System.in);
+        String musicName = input.nextLine();
+        for (int i = 0; i < cart.size(); i++){
+            if (cart.get(i).equals(musicName)) {
+                cart.remove(i);
+                break;
+            } else {
+                System.out.println("This Music doesn't exist in your cart");
+            }
+        }
+    }
+    
+    public void checkoutOrders() {
+        System.out.println("------ Your Cart ------");
+        getMusicInCart();
+        System.out.println("To Confirm your Order Enter y else Enter n");
+        Scanner input = new Scanner(System.in);
+        char s = input.nextLine().charAt(0);
+        if (s == 'y' || s == 'Y') {
+            try {
+                Statement statement = connection.createStatement();
+                if (cart.size() > 0) {
+                    for (int i = 0; i < cart.size(); i++) {
+                        ResultSet resultSet = statement.executeQuery("SELECT quantity FROM music WHERE musicName = '" + cart.get(i) + "'");
+                        int quantity = resultSet.getInt(1);
+                        preparedStatement = connection.prepareStatement("UPDATE music SET quantity = '"+ (quantity - 1) +"'WHERE musicName = '" + cart.get(i) + "'");
+                        preparedStatement.executeUpdate();
+                        System.out.println("Purchase Completed Successfully");
+                    }
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
 
     public void filterMusics() {
         System.out.println("Enter number of sorting you want\n" +

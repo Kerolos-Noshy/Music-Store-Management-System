@@ -13,15 +13,23 @@
    - Sign in and sign out of the system.
    - Add/ edit/ delete category of music.
    - Add / edit / delete musics.
-   - Show Music Details.
-   - edit the music description.
+   - Filter Musics[^1].
+   - Show sales report[^2].
+   
 2. Customer
    - Resister, Sign in and sign out of the system.
    - Create Order.
-   - Find Music.
-   - Filter Musics[^1].
+   - Search for Music.
+   - Show Music Details.
+   - Show Cart.
+   - Delete item from cart.
+   - Checkout orders.
+   - Open Profile.
+   - Open History.
+   
    
 ##
-:point_right: **The project is not completed yet.** :point_left:
+:point_right: **The project is not completed yet.**
 
-[^1]: This Feature Shows (Sold Musics, Musics in stock, all Musics)
+[^1]: This Feature Shows (Not available Musics, Musics in stock, all Musics)
+[^2]: This Feature Shows How many times each music sold, the most sold music ,and the total number of sold musics.

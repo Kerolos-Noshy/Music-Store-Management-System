@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="store.db" uuid="2750b29f-c8e4-4af5-b5b6-9636f63a74f6">
+    <data-source source="LOCAL" name="store.db" uuid="a16e49a6-4273-43a4-9ace-221c73797864">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\kerol\Desktop\Music Store Management System\Music Store Management System\src\DB\store.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\kerol\Downloads\Music-Store-Management-System\src\DB\store.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

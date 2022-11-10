@@ -23,6 +23,6 @@ public class Customer extends User{
     }
 
     public void deleteFromCart(Music m) {
-        cart.add(m);
+        cart.remove(m);
     }
 }

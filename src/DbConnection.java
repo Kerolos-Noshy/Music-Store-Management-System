@@ -10,7 +10,7 @@ public class DbConnection {
             String url = "jdbc:sqlite:src/DB/store.db";
             Class.forName("org.sqlite.JDBC");
             Connection connection = DriverManager.getConnection(url);
-            System.out.println("connected successfully");
+            // System.out.println("connected successfully");
             return connection;
         } catch (SQLException e) {
             throw new RuntimeException(e);

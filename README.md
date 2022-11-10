@@ -27,9 +27,7 @@
    - Open Profile.
    - Open History.
    
-   
-##
-:point_right: **The project is not completed yet.**
+
 
 [^1]: This Feature Shows (Not available Musics, Musics in stock, all Musics)
 [^2]: This Feature Shows How many times each music sold, the most sold music ,and the total number of sold musics.

@@ -3,7 +3,7 @@ public class Category {
 
     public static boolean isCategoryExist(String categoryName, Statement statement) throws SQLException {
         ResultSet resultSet;
-        resultSet = statement.executeQuery("SELECT * FROM category");
+        resultSet = statement.executeQuery("SELECT category_name FROM category");
         while (resultSet.next()) {
             if (resultSet.getString(1).equals(categoryName))
                 return true;

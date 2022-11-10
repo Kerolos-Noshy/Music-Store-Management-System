@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.Date;
+import java.util.Scanner;
 
 public class Music {
     private String musicName;
@@ -21,7 +22,7 @@ public class Music {
 
     public static boolean isMusicExist(String musicName, Statement statement) throws SQLException {
         ResultSet resultSet;
-        resultSet = statement.executeQuery("SELECT musicName FROM music");
+        resultSet = statement.executeQuery("SELECT music_name FROM music");
         while (resultSet.next()) {
             if (resultSet.getString(1).equals(musicName))
                 return true;
@@ -31,21 +32,28 @@ public class Music {
 
     public static void musicDetails(Statement statement, String musicName) throws SQLException {
         ResultSet resultSet;
-        resultSet = statement.executeQuery("SELECT * FROM music WHERE musicName = '"+ musicName + "'");
-        while (resultSet.next()) {
-            System.out.println("Category: " + resultSet.getString(1) + "\n"
-                    + "Music: " + resultSet.getString(2) + "\n"
-                    + "Description: " + resultSet.getString(5) + "\n"
-                    + "Duration: " + resultSet.getInt(3) + ":" + resultSet.getInt(4) + "\n"
-                    + "Release Date: " + resultSet.getInt(6) + "/" + resultSet.getInt(7) + "/" + resultSet.getInt(8) + "\n"
-                    + "Quantity: " + resultSet.getInt(9) + "\n"
-                    + "Price: " + resultSet.getFloat(10) + " $");
-        }
+        resultSet = statement.executeQuery("SELECT * FROM music WHERE music_name = '"+ musicName + "'");
+        String name =  resultSet.getString(3);
+        String description = resultSet.getString(6);
+        String duration  = resultSet.getInt(4) + ":" + resultSet.getInt(5);
+        String releaseDate = resultSet.getInt(7) + "/" + resultSet.getInt(8) + "/" + resultSet.getInt(9);
+        int quantity = resultSet.getInt(10);
+        float price = resultSet.getFloat(11);
+        resultSet = statement.executeQuery("SELECT category_name FROM category WHERE category_id = '" + resultSet.getInt(1) + "'");
+        String categoryName = resultSet.getString(1);
+
+        System.out.println("Category: " + categoryName + "\n"
+                + "Music: " + name + "\n"
+                + "Description: " + description + "\n"
+                + "Duration: " + duration + "\n"
+                + "Release Date: " + releaseDate + "\n"
+                + "Quantity: " + quantity + "\n"
+                + "Price: " + price + " $");
     }
 
     public static void showAllMusics(Statement statement) throws SQLException {
         int counter = 1;
-        ResultSet resultSet = statement.executeQuery("SELECT musicName FROM music");
+        ResultSet resultSet = statement.executeQuery("SELECT music_name FROM music");
         while (resultSet.next()) {
             String musicName = resultSet.getString(1);
             System.out.println(counter + "- " + musicName);
@@ -55,7 +63,7 @@ public class Music {
 
     public static void showMusicsInStock(Statement statement) throws SQLException {
         int counter = 1;
-        ResultSet resultSet = statement.executeQuery("SELECT musicName FROM music WHERE quantity > 0");
+        ResultSet resultSet = statement.executeQuery("SELECT music_name FROM music WHERE quantity > 0");
         while (resultSet.next()) {
             String musicName = resultSet.getString(1);
             System.out.println(counter + "- " + musicName);
@@ -63,11 +71,18 @@ public class Music {
         }
     }
 
+    public static boolean isMusicInStock(Statement statement, String musicName) throws SQLException {
+        ResultSet resultSet = statement.executeQuery("SELECT quantity FROM music WHERE music_name ='" + musicName + "'");
+        if (resultSet.getInt(1) > 0)
+            return true;
+        return false;
+    }
+
     public static void searchMusic(Statement statement, String musicName) throws SQLException{
         int counter = 1;
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM music WHERE musicName LIKE '%" + musicName + "%'");
+        ResultSet resultSet = statement.executeQuery("SELECT music_name FROM music WHERE music_name LIKE '%" + musicName + "%'");
         while (resultSet.next()) {
-            String musicName1 = resultSet.getString(2);
+            String musicName1 = resultSet.getString(1);
             System.out.println(counter + "- " + musicName1);
             counter++;
         }
@@ -75,17 +90,16 @@ public class Music {
             System.out.println("\nNo Music Found");
     }
 
-    public static void showSoldMusics(Statement statement) throws SQLException {
-        int counter = 1;
-        int noOfTotalSoldItems = 0;
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM soldItems");
+    public static void showNotAvailableMusics(Statement statement) throws SQLException {
+        boolean flag = false;
+        ResultSet resultSet = statement.executeQuery("SELECT music_name FROM music WHERE quantity < 1");
         while (resultSet.next()) {
+            flag = true;
             String musicName = resultSet.getString(1);
-            int soldTimes = resultSet.getInt(2);
-            System.out.println(counter + "- " + musicName + "\t Sold times: " + soldTimes);
-            noOfTotalSoldItems += soldTimes;
-            counter++;
+            System.out.println("- " + musicName);
         }
-        System.out.println("Total sold musics: "  + noOfTotalSoldItems);
+        if (!flag) {
+            System.out.println("All music are available");
+        }
     }
 }
